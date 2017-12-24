@@ -1,12 +1,13 @@
 import React from 'react';
-import {View,Text,ListView,styleSheet, RefreshControl, TouchableHighlight,Image} from 'react-native';
+import {View,Text,ListView,styleSheet, RefreshControl, TouchableHighlight,Image,navigator} from 'react-native';
 import Moment from 'moment';
+import ZhihuDetail from './ZhihuDetail';
 
 const url = 'http://news-at.zhihu.com/api/4/news/before/';
 const ds = new ListView.DataSource({rowHasChanged:(r1,r2) => r1 != r2});
 const ONEDAY = 20*60*60*1000;
 const pageNo = Moment(new Date().getTime() + ONEDAY).format('YYYYMMDD');
-console.log(pageNo);
+
 class ZhihuDaily extends React.Component{
     static navigationOptions = ({navigation}) => ({
         title:`${navigation.state.params.name}`
@@ -20,13 +21,12 @@ class ZhihuDaily extends React.Component{
     }
     componentDidMount(){
         this._fetchData();
-        console.log(this.state);
+        console.log(navigator);
     }
     _fetchData(){
         fetch(url + pageNo)
             .then(response => response.json())
             .then(json => {
-                console.log(json);
                 this.setState({
                     refreshing: false,
                     loadMore: false,
@@ -40,7 +40,7 @@ class ZhihuDaily extends React.Component{
         return(
             <TouchableHighlight
                 underlayColor="#008b8b"
-                
+               
             >
                 <View>
                     <Text style={{fontSize:20,flex:1}}>{rowData.title}</Text>
@@ -59,6 +59,14 @@ class ZhihuDaily extends React.Component{
             pageNo: Moment(new Date(Moment(this.state.pageNo)).getTime() - ONEDAY).format('YYYYMMDD')
         }, () => this._fetchData())
     }
+    _onPress(rowId){
+        this.props.navigator.push({
+            component:ZhihuDetail,
+            params:{
+                item:rowId
+            }
+        })
+    }
     render(){
         return (
             <ListView
@@ -73,12 +81,12 @@ class ZhihuDaily extends React.Component{
                 // renderRow={this._renderRow.bind(this, rowData)}
                 renderRow={(rowData) =>
                         {
-                            console.log(rowData);
                             return (
                                 <TouchableHighlight
                                     // style={styles.rowStyle}
                                     underlayColor='#008b8b'
                                 // onPress={() => this._onPress(rowData.name)}
+                                    onPress={()=> this._onPress(rowData.id)}
                                 >
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                         <Image style={{ width: 100, height: 80, borderRadius: 4 }} source={{ uri: rowData.images[0] }} />
