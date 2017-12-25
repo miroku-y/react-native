@@ -19,6 +19,7 @@ import SegmentFault from './components/SegmentFault';
 import TouTiao from './components/TouTiao';
 import TuiCool from './components/TuiCool';
 import ZhihuDaily from './components/ZhihuDaily';
+import ZhihuDetail from './components/ZhihuDetail';
 // const instructions = Platform.select({
 //   ios: 'Press Cmd+R to reload,\n' +
 //     'Cmd+D or shake for dev menu',
@@ -93,15 +94,16 @@ const Tab = TabNavigator(
 );
 
 export default App = StackNavigator({
-  ITTab: {screen:Tab},
-  CNodeJS: {screen:CNodeJS},
-  JueJin: {screen:JueJin},
-  Kr36: {screen:Kr36},
-  OSChina: {screen:OSChina},
-  SegmentFault: {screen:SegmentFault},
-  TouTiao: {screen:TouTiao},
-  TuiCool: {screen:TuiCool},
-  ZhihuDaily: {screen:ZhihuDaily}
+    ITTab: {screen:Tab},
+    CNodeJS: {screen:CNodeJS},
+    JueJin: {screen:JueJin},
+    Kr36: {screen:Kr36},
+    OSChina: {screen:OSChina},
+    SegmentFault: {screen:SegmentFault},
+    TouTiao: {screen:TouTiao},
+    TuiCool: {screen:TuiCool},
+    ZhihuDaily: {screen:ZhihuDaily},
+    ZhihuDetail: { screen: ZhihuDetail}
 });
 // export default class App extends Component<{}> {
 //   render() {

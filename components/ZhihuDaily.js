@@ -1,7 +1,6 @@
 import React from 'react';
-import {View,Text,ListView,styleSheet, RefreshControl, TouchableHighlight,Image,navigator} from 'react-native';
+import {View,Text,ListView,StyleSheet, RefreshControl, TouchableHighlight,Image,navigator} from 'react-native';
 import Moment from 'moment';
-import ZhihuDetail from './ZhihuDetail';
 
 const url = 'http://news-at.zhihu.com/api/4/news/before/';
 const ds = new ListView.DataSource({rowHasChanged:(r1,r2) => r1 != r2});
@@ -21,28 +20,27 @@ class ZhihuDaily extends React.Component{
     }
     componentDidMount(){
         this._fetchData();
-        console.log(navigator);
+        console.log(this.props);
     }
     _fetchData(){
-        fetch(url + pageNo)
+        fetch(url + this.state.pageNo)
             .then(response => response.json())
             .then(json => {
                 this.setState({
                     refreshing: false,
                     loadMore: false,
-                    dataSource: this.state.pageNo === 1 ? json.stories : this.state.dataSource.concat(json.stories)
+                    dataSource: pageNo === this.state.pageNo ? json.stories : this.state.dataSource.concat(json.stories)
                 })
             })
             .catch(error => console.log(error));
     }
     _renderRow(rowData){
-        console.log(rowData);
         return(
             <TouchableHighlight
                 underlayColor="#008b8b"
                
             >
-                <View>
+                <View style={styles.rowStyle}>
                     <Text style={{fontSize:20,flex:1}}>{rowData.title}</Text>
                     <Image
                         style={{width:100,height:80}}
@@ -59,13 +57,12 @@ class ZhihuDaily extends React.Component{
             pageNo: Moment(new Date(Moment(this.state.pageNo)).getTime() - ONEDAY).format('YYYYMMDD')
         }, () => this._fetchData())
     }
-    _onPress(rowId){
-        this.props.navigator.push({
-            component:ZhihuDetail,
-            params:{
-                item:rowId
-            }
-        })
+    _onPress(rowData){
+        const {navigate} = this.props.navigation;
+        navigate('ZhihuDetail',{
+            title:rowData.title,
+            href:'http://news-at.zhihu.com/story/' + rowData.id,
+        });
     }
     render(){
         return (
@@ -86,11 +83,11 @@ class ZhihuDaily extends React.Component{
                                     // style={styles.rowStyle}
                                     underlayColor='#008b8b'
                                 // onPress={() => this._onPress(rowData.name)}
-                                    onPress={()=> this._onPress(rowData.id)}
+                                    onPress={()=> this._onPress(rowData)}
                                 >
-                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <View style={styles.rowStyle}>
+                                        <Text style={{fontSize:20,flex:1}}>{rowData.title}</Text>
                                         <Image style={{ width: 100, height: 80, borderRadius: 4 }} source={{ uri: rowData.images[0] }} />
-                                        <Text>{rowData.title}</Text>
                                     </View>
                                 </TouchableHighlight>
                             )
@@ -105,3 +102,13 @@ class ZhihuDaily extends React.Component{
 }
 
 export default ZhihuDaily;
+
+const styles = StyleSheet.create({
+    rowStyle: {
+        padding: 10,
+        backgroundColor: '#fff',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 1,
+    },
+})
